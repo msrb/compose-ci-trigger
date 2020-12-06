@@ -1,0 +1,25 @@
+#!/usr/bin/python3
+import os
+import sys
+import requests
+import koji
+
+original_pkgsizes = sys.argv[1]
+build_id = sys.argv[2]
+r = requests.get(original_pkgsizes)
+
+allowed_packages = set()
+for line in r.text.split("\n"):
+    if not line:
+        continue
+    name_arch, _ = line.split(":")
+    allowed_packages.add(name_arch.split(".")[0])
+
+infra = koji.ClientSession('https://koji.fedoraproject.org/kojihub')
+rpms = infra.listRPMs(int(build_id))
+
+for rpm in rpms:
+    if rpm["name"] in allowed_packages:
+        sys.exit(0)
+
+sys.exit(1)
