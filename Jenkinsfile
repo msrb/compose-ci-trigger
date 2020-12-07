@@ -2,6 +2,8 @@
 
 def msg
 def artifactId
+def additionalArtifactIds
+def taskId
 def allTaskIds = [] as Set
 def compose_url = 'https://kojipkgs.fedoraproject.org/compose/rawhide/latest-Fedora-Rawhide/logs/x86_64/buildinstall-Server-logs/original-pkgsizes.txt'
 
@@ -55,17 +57,24 @@ pipeline {
                         }
 
                         if (allTaskIds) {
-                            allTaskIds.each { taskId ->
-                                artifactId = "koji-build:${taskId}"
+                            // compose-ci pipeline can test all given task ids at once, but it is currently
+                            // not possible to report only a single result on the whole Fedora update.
+                            // Therefore we run the pipeline once, with all given task ids, and we report
+                            // only on the first task id (ARTIFACT_ID)
+                            taskId = allTaskIds[0]
+                            artifactId = "koji-build:${taskId}"
+                            // all but first
+                            additionalArtifactIds = allTaskIds.findAll{ it != taskId }.collect{ "koji-build:${it}" }.join(',')
 
-                                build(
-                                    job: 'fedora-ci/compose-ci-pipeline/master',
-                                    wait: false,
-                                    parameters: [
-                                        string(name: 'ARTIFACT_ID', value: artifactId)
-                                    ]
+                            build(
+                                job: 'fedora-ci/compose-ci-pipeline/master',
+                                wait: false,
+                                parameters: [
+                                    string(name: 'ARTIFACT_ID', value: artifactId),
+                                    string(name: 'ADDITIONAL_ARTIFACT_IDS',
+                                    value: additionalArtifactIds
                                 )
-                            }
+                            ]
                         }
                     }
                 }
