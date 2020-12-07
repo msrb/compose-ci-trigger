@@ -73,10 +73,9 @@ pipeline {
                                 wait: false,
                                 parameters: [
                                     string(name: 'ARTIFACT_ID', value: artifactId),
-                                    string(name: 'ADDITIONAL_ARTIFACT_IDS',
-                                    value: additionalArtifactIds
-                                )
-                            ]
+                                    string(name: 'ADDITIONAL_ARTIFACT_IDS', value: additionalArtifactIds)
+                                ]
+                            )
                         }
                     }
                 }
