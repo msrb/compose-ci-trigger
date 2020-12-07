@@ -15,7 +15,7 @@ pipeline {
     }
 
     options {
-        buildDiscarder(logRotator(daysToKeepStr: '45', artifactNumToKeepStr: '100'))
+        buildDiscarder(logRotator(daysToKeepStr: '14', artifactNumToKeepStr: '100'))
     }
 
     triggers {
@@ -61,6 +61,8 @@ pipeline {
                             // not possible to report only a single result on the whole Fedora update.
                             // Therefore we run the pipeline once, with all given task ids, and we report
                             // only on the first task id (ARTIFACT_ID)
+                            // see: https://pagure.io/fedora-ci/general/issue/145
+
                             taskId = allTaskIds[0]
                             artifactId = "koji-build:${taskId}"
                             // all but first
