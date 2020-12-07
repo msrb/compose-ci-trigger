@@ -24,7 +24,7 @@ pipeline {
                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
                    overrides: [
                        topic: 'org.fedoraproject.prod.bodhi.update.status.testing.koji-build-group.build.complete',
-                       queue: 'osci-pipelines-queue-10'
+                       queue: 'osci-pipelines-queue-1'
                    ],
                    checks: [
                        [field: '$.artifact.release', expectedValue: '^f34$']
